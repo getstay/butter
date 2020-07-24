@@ -2,6 +2,10 @@
 
 A tool to make writing, distributing, and executing LibreOffice Basic code reasonable from a unix mindset.
 
+## status: Proof of concept
+
+The hello world example works, but this tool is incomplete and not ready for use.
+
 ## motivations
 
 This is a small sample of relevant threads:
