@@ -6,6 +6,7 @@ A tool to make writing, distributing, and executing LibreOffice Basic code reaso
 
 This is a small sample of relevant threads:
 
+- https://stackoverflow.com/questions/62626602/how-to-run-libreoffice-macros-from-the-command-line-no-uno-or-libreoffice-ser
 - https://superuser.com/questions/250086/what-is-needed-to-invoke-libreoffice-running-just-the-macro-without-the-gui
 - https://ask.libreoffice.org/en/question/136470/libreoffice-stuck-on-2-or-more-parallel-processing/
 - https://stackoverflow.com/questions/13675192/can-i-do-vba-programming-with-vim#comment18989035_13675915
@@ -15,7 +16,7 @@ Like, Microsoft Office, LibreOffice/OpenOffice assumes full control over Basic m
 - To distribute your work, you have to either find and copy the files out of your user global config profile (including required cruft xml GUI related files), or figure out how to use the GUI to embed macro libraries into a file and save it.
 - Version control? Your files are either in the user config profile or embedded in an easier-to-distribute file... but that file is a zip archive, so your version control commits are practically worthless.
 - Want to download a macro and run it from the command line? That's a tolerable endeavor if you know the format (it's poorly documented and documented incorrectly in places), **except** you're bound to have a macro run and just hang afterward, because the macro itself is expected to close the document it is running from in that case, even though it is headless.
-- If you get beyond thos obstacles, try running a command twice in parallel - the second invocation does nothing whatsoever - not even reporting a reason why (it's because the user profile is being used exclusively by the first invocation). This is all eye-rolling madness in comparison to opening up a text editor, writing some code in it, and typing a command to run the code, and having it work the same way if you repeat it. This project aims to let you write and invoke LibreOffice Basic macros without the LibreOffice GUI/IDE, allowing you to stay fully in the terminal if you wish, without jumping through any needless hoops. You are freed to move your work in and out of LibreOffice's monolithic control as you please.
+- If you get beyond those obstacles, try running a command twice in parallel - the second invocation does nothing whatsoever - not even reporting a reason. This is all eye-rolling madness in comparison to opening up a text editor, writing some code in it, typing a command, and the code runs. This project aims to let you write and invoke LibreOffice Basic macros without the LibreOffice GUI/IDE, allowing you to stay fully in the terminal if you wish, without jumping through any needless hoops. You are freed to move your work in and out of LibreOffice's monolithic control as you please.
 
 Why is it called butter?
 `LibreOffice Basic -> LBA -> Liquid Butter Alternative -> Butter`
@@ -42,6 +43,9 @@ npm install -g getstay/butter
 There is a library `Process` inlcuded in this project under `./basic`. It has functions for working with child processes and writing to stdout and stderr. In this example, we indicate the directory containing the `Process` library, and invoke the `stdout_log` function of its module that is also called `Process`.
 ```sh
 butter --library-path ./basic 'Process.Process.stdout_log("hello, world!")'
+
+# log to stderr, with stderr output colored red to confirm it is stderr
+butter --library-path ./basic 'Process.Process.stderr_log("hello, world!")' 2> >(while read line; do echo -e "\e[01;31m$line\e[0m" >&2; done)
 ```
 
 ## Library structure
@@ -75,7 +79,7 @@ butter --library-path ./basic 'Process.Process.stdout_log("hello, world!")'
 		- ${ModuleName}.vb
 			LibreOffice Basic code belongs in these files.
 			Unlike the original script embedded within xml, this script does not have encoded html entities.
-			`.vb` was chosen as the extension because it should have suitable syntax highlighting for LibreOffice Basic code.
+			`.vb` was chosen as the extension because it seems to offer slightly better syntax highlighting for LibreOffice Basic code in editors than `.bas`.
 ```
 
 ## usage
